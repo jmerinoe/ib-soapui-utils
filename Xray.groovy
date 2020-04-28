@@ -39,7 +39,7 @@ class Xray{
 	}
 
 	def updateTestResult(){
-		def logUtils = context.getProperty("scriptLibrary").get("CommonUtils");
+		def logUtils = context.getProperty("scriptLibrary").get("LogUtils");
 		def netClient = context.getProperty("scriptLibrary").get("NetClient");
 		def emptyMap = [:]
 		
