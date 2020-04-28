@@ -49,12 +49,18 @@ class LogUtils {
   def buildLog(){
   	def builder = new StringBuilder()
   	def stepNumber = 1
+  	def testResult = "[TEST PASSED]"
+  	def testDuration = 0
   	testRunner.getResults().each{
   		builder.append("Step " + stepNumber + ": " + it.getTestStep().getName() + "\n")
   		builder.append("  > Type: " + it.getTestStep().config.type + "\n")
   		builder.append("  > Executed: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(it.getTimeStamp())) + "\n")
-  		builder.append("  > Duration: " + it.getTimeTaken() + " ms" + "\n")
-  		builder.append("  > Status: " + it.getStatus().toString() + "\n")
+  		def duration = it.getTimeTaken()
+  		testDuration += duration
+  		builder.append("  > Duration: " + duration + " ms" + "\n")
+  		def status = it.getStatus().toString()
+  		testResult = status.equals("FAILED") ? "[TEST FAILED]" : testResult
+  		builder.append("  > Status: " + status + "\n")
   		if (it instanceof WsdlTestRequestStepResult) {
   			builder.append("  > Request: " + ((MessageExchange) it).getRequestContent() + "\n")
   			builder.append("  > Response: " + ((MessageExchange) it).getResponseContent() + "\n")
@@ -70,6 +76,9 @@ class LogUtils {
   		builder.append("\n\n")
   		stepNumber++
   	}
+  	builder.append("\n\n")
+  	builder.append("Test duration: " + testDuration + " ms\n")
+  	builder.append(testResult)
   	return builder.toString()
   }
   
@@ -80,4 +89,3 @@ if (initObj == null) {
     initObj = new LogUtils(log, context, context.getTestRunner())
     context.setProperty(initObj.getClass().getName(), initObj)
 }
-
