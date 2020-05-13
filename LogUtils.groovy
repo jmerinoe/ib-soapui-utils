@@ -48,6 +48,7 @@ class LogUtils {
   
   def buildLog(){
   	def builder = new StringBuilder()
+	builder.append("TEST " + testRunner.testCase.getName() + "\n\n")
   	def stepNumber = 1
   	def testResult = "[TEST PASSED]"
   	def testDuration = 0

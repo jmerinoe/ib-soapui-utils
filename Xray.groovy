@@ -38,7 +38,7 @@ class Xray{
 	    return content.bytes.encodeBase64().toString()
 	}
 
-	def updateTestResult(){
+	def updateTestResult(precondition){
 		def logUtils = context.getProperty("scriptLibrary").get("LogUtils");
 		def netClient = context.getProperty("scriptLibrary").get("NetClient");
 		def emptyMap = [:]
@@ -66,8 +66,14 @@ class Xray{
 			log.info "Error intentando actualizar resultado test " + context.testCase.getName() + " en JIRA"
 			initError = true
 		}
+
+		def appliesUpdate = true
+		if (precondition != null && precondition == "1"){
+			appliesUpdate = estado == "PASSED"
+			estado = "EXECUTING"
+		}
 		
-		if (!initError){
+		if (!initError && appliesUpdate){
 			def authBody = new JsonBuilder()
 			authBody{
 				client_id "${clientId}"
